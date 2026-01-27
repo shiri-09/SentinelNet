@@ -40,6 +40,29 @@ const notifyContacts = async (contacts, location, alert) => {
 };
 
 /**
+ * Trigger automatic emergency call based on alert type
+ * Maps disaster types to appropriate emergency services
+ */
+const triggerEmergencyCall = (alertType) => {
+    const emergencyNumbers = {
+        'Fire': { number: '101', service: 'Fire Department' },
+        'Flood': { number: '112', service: 'Police/Emergency' },
+        'Earthquake': { number: '112', service: 'Police/Emergency' },
+        'Toxic Gas Leak': { number: '108', service: 'Ambulance' }
+    };
+
+    const emergency = emergencyNumbers[alertType] || emergencyNumbers['Flood'];
+
+    console.log(`[AutoCall] Initiating call to ${emergency.service} (${emergency.number}) for ${alertType} alert`);
+
+    // Use tel: protocol to initiate phone call
+    // Note: Browser will show confirmation dialog for security
+    window.location.href = `tel:${emergency.number}`;
+
+    return emergency;
+};
+
+/**
  * Main Application Provider
  * 
  * This is the Control Plane integration point where all modules converge.
@@ -112,6 +135,14 @@ export const AppProvider = ({ children }) => {
                     const storedContacts = JSON.parse(localStorage.getItem('sentinelnet_emergency_contacts') || '[]');
                     if (storedContacts.length > 0) {
                         notifyContacts(storedContacts, currentLocation, alert);
+                    }
+
+                    // Auto-call emergency services for HIGH severity alerts
+                    if (alert.severity === 'HIGH') {
+                        // Small delay to ensure alert is displayed first
+                        setTimeout(() => {
+                            triggerEmergencyCall(alert.type);
+                        }, 2000);
                     }
                 }
             }

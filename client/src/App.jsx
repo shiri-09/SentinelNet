@@ -7,6 +7,7 @@ import Alerts from './screens/Alerts';
 import Services from './screens/Services';
 import Instructions from './screens/Instructions';
 import Admin from './screens/Admin';
+import Map from './screens/Map';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
             <Route path="/" element={<Dashboard />} />
             <Route path="/alerts" element={<Alerts />} />
             <Route path="/services" element={<Services />} />
+            <Route path="/map" element={<Map />} />
             <Route path="/instructions" element={<Instructions />} />
             <Route path="/admin" element={<Admin />} />
           </Routes>

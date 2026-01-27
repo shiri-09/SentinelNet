@@ -1,14 +1,14 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Home, Bell, Phone, BookOpen, Settings } from 'lucide-react';
+import { Home, Bell, Phone, BookOpen, Settings, MapPin } from 'lucide-react';
 
 const Navbar = () => {
     const links = [
-        { to: '/', icon: <Home size={24} />, label: 'Home' },
-        { to: '/alerts', icon: <Bell size={24} />, label: 'Alerts' },
-        { to: '/services', icon: <Phone size={24} />, label: 'Services' },
-        { to: '/instructions', icon: <BookOpen size={24} />, label: 'Safety' },
-        { to: '/admin', icon: <Settings size={24} />, label: 'Admin' },
+        { to: '/', icon: <Home size={22} />, label: 'Home' },
+        { to: '/alerts', icon: <Bell size={22} />, label: 'Alerts' },
+        { to: '/map', icon: <MapPin size={22} />, label: 'Map' },
+        { to: '/services', icon: <Phone size={22} />, label: 'Services' },
+        { to: '/admin', icon: <Settings size={22} />, label: 'Admin' },
     ];
 
     return (
