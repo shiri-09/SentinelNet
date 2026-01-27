@@ -55,9 +55,14 @@ const triggerEmergencyCall = (alertType) => {
 
     console.log(`[AutoCall] Initiating call to ${emergency.service} (${emergency.number}) for ${alertType} alert`);
 
-    // Use tel: protocol to initiate phone call
-    // Note: Browser will show confirmation dialog for security
-    window.location.href = `tel:${emergency.number}`;
+    // Create a temporary anchor element to trigger the call
+    // This avoids navigation issues with window.location.href
+    const link = document.createElement('a');
+    link.href = `tel:${emergency.number}`;
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 
     return emergency;
 };
