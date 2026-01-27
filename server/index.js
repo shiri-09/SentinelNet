@@ -75,6 +75,39 @@ app.post('/api/service/request', (req, res) => {
     res.json({ status: 'REQUEST_LOGGED', service });
 });
 
+// Contact Notification (for HIGH/MEDIUM alerts)
+app.post('/api/contacts/notify', (req, res) => {
+    const { contacts, location, alert } = req.body;
+
+    if (!contacts || !Array.isArray(contacts)) {
+        return res.status(400).json({ error: 'Invalid contacts data' });
+    }
+
+    // Log each contact notification
+    contacts.forEach(contact => {
+        console.log(`[CONTACTS] Notifying ${contact.name} (${contact.phone}) about ${alert?.severity || 'UNKNOWN'} alert`);
+        console.log(`[CONTACTS] Location: ${location ? `${location.lat}, ${location.lng}` : 'Unknown'}`);
+    });
+
+    // In a real application, this would integrate with SMS/Email services
+    // For demo purposes, we just log the notifications
+    const notification = {
+        contacts: contacts.map(c => ({ name: c.name, phone: c.phone })),
+        location,
+        alert,
+        timestamp: new Date(),
+        status: 'SIMULATED'
+    };
+
+    console.log(`[CONTACTS] Notification sent to ${contacts.length} contact(s)`);
+
+    res.json({
+        status: 'NOTIFICATIONS_QUEUED',
+        count: contacts.length,
+        message: 'Contacts notified with your location (simulated for demo)'
+    });
+});
+
 // Get all logs (for admin visibility)
 app.get('/api/admin/logs', (req, res) => {
     res.json(logs);

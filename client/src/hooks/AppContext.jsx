@@ -5,9 +5,39 @@ import { stopSeverityResponse } from '../logic/severityController';
 import { executeSOSFlow, stopSOSFlow, recoverSOSState, SOS_STATES } from '../logic/sosEngine';
 import { startTracking, stopTracking, getTrackingStatus } from '../logic/gpsController';
 import { useBattery } from './useBattery';
+import { useContacts } from './useContacts';
 import axios from 'axios';
 
 const AppContext = createContext();
+
+/**
+ * Notify all emergency contacts with user's location
+ * Called when HIGH or MEDIUM severity alerts are triggered
+ */
+const notifyContacts = async (contacts, location, alert) => {
+    if (!contacts || contacts.length === 0) {
+        console.log('[Contacts] No contacts to notify');
+        return;
+    }
+
+    console.log(`[Contacts] Notifying ${contacts.length} contacts about ${alert.severity} alert`);
+
+    try {
+        await axios.post('/api/contacts/notify', {
+            contacts,
+            location,
+            alert: {
+                id: alert.id,
+                type: alert.type,
+                severity: alert.severity,
+                timestamp: alert.timestamp
+            }
+        });
+        console.log('[Contacts] Notification sent successfully');
+    } catch (e) {
+        console.error('[Contacts] Failed to notify contacts:', e.message);
+    }
+};
 
 /**
  * Main Application Provider
@@ -25,6 +55,7 @@ export const AppProvider = ({ children }) => {
     const [isLowPowerMode, setIsLowPowerMode] = useState(false);
 
     const battery = useBattery();
+    const { contacts, addContact, removeContact, canAddMore, maxContacts } = useContacts();
 
     // Ref to track current location for socket event handlers (avoids stale closure)
     const userLocationRef = useRef(userLocation);
@@ -74,6 +105,15 @@ export const AppProvider = ({ children }) => {
 
             if (decision.shouldTrigger) {
                 setActiveAlerts(prev => [...prev, alert]);
+
+                // Notify emergency contacts for HIGH and MEDIUM severity alerts
+                if (alert.severity === 'HIGH' || alert.severity === 'MEDIUM') {
+                    // Get contacts from localStorage directly to avoid closure issues
+                    const storedContacts = JSON.parse(localStorage.getItem('sentinelnet_emergency_contacts') || '[]');
+                    if (storedContacts.length > 0) {
+                        notifyContacts(storedContacts, currentLocation, alert);
+                    }
+                }
             }
         });
 
@@ -211,6 +251,13 @@ export const AppProvider = ({ children }) => {
             logs,
             isLowPowerMode,
             battery,
+
+            // Contacts
+            contacts,
+            addContact,
+            removeContact,
+            canAddMore,
+            maxContacts,
 
             // Actions
             toggleSOS,
