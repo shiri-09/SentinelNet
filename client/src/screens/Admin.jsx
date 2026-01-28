@@ -92,7 +92,7 @@ const Admin = () => {
                         <span className="text-emerald-500">● 142 CONNECTED</span>
                     </div>
                     <div className="h-2 bg-white/5 rounded-full overflow-hidden">
-                        <div className="h-full bg-red-500 w-1/3 animate-pulse" />
+                        <div className="h-full bg-emerald-500 w-[85%] transition-all duration-500" />
                     </div>
                 </div>
             </div>
