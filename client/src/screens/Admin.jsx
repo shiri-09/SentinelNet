@@ -1,8 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Radio, AlertCircle, Map, Zap } from 'lucide-react';
 
 const Admin = () => {
+    // Dynamic connected nodes count
+    const [connectedNodes, setConnectedNodes] = useState(Math.floor(Math.random() * 100) + 100);
+
+    useEffect(() => {
+        // Simulate real-time network activity with periodic updates
+        const interval = setInterval(() => {
+            setConnectedNodes(prev => {
+                // Random fluctuation between -5 and +5
+                const change = Math.floor(Math.random() * 11) - 5;
+                const newValue = prev + change;
+                // Keep between 80 and 200
+                return Math.max(80, Math.min(200, newValue));
+            });
+        }, 3000);
+
+        return () => clearInterval(interval);
+    }, []);
     const [alert, setAlert] = useState({
         type: 'Flood',
         severity: 'MEDIUM',
@@ -89,10 +106,10 @@ const Admin = () => {
                 <div className="space-y-3">
                     <div className="flex justify-between text-[11px] font-bold uppercase text-slate-400">
                         <span>Active Nodes</span>
-                        <span className="text-emerald-500">● 142 CONNECTED</span>
+                        <span className="text-emerald-500">● {connectedNodes} CONNECTED</span>
                     </div>
                     <div className="h-2 bg-white/5 rounded-full overflow-hidden">
-                        <div className="h-full bg-emerald-500 w-[85%] transition-all duration-500" />
+                        <div className="h-full bg-emerald-500 transition-all duration-500" style={{ width: `${Math.min(100, (connectedNodes / 200) * 100)}%` }} />
                     </div>
                 </div>
             </div>
