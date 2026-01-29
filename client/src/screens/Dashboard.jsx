@@ -1,9 +1,12 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../hooks/AppContext';
-import { MapPin, Battery, ShieldAlert, WifiOff, Radio, Shield, Clock } from 'lucide-react';
+import { MapPin, Battery, ShieldAlert, WifiOff, Radio, Shield, Clock, Zap } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SOS_STATES } from '../logic/sosEngine';
-
+import WeatherWidget from '../components/WeatherWidget';
+import NetworkStatus from '../components/NetworkStatus';
+import QuickActions from '../components/QuickActions';
 /**
  * Dashboard Screen
  * 
@@ -23,6 +26,8 @@ const Dashboard = () => {
         isLowPowerMode,
         battery
     } = useAppContext();
+
+    const navigate = useNavigate();
 
     /**
      * Get human-readable SOS phase status
@@ -80,8 +85,8 @@ const Dashboard = () => {
                 <button
                     onClick={toggleSOS}
                     className={`relative w-64 h-64 rounded-full flex items-center justify-center transition-all duration-500 ${isSOSActive
-                            ? 'bg-red-600 scale-110 shadow-[0_0_60px_rgba(239,68,68,0.6)]'
-                            : 'bg-red-500 hover:bg-red-600'
+                        ? 'bg-red-600 scale-110 shadow-[0_0_60px_rgba(239,68,68,0.6)]'
+                        : 'bg-red-500 hover:bg-red-600'
                         }`}
                 >
                     <div className={`absolute inset-0 rounded-full border-4 border-white/20 ${isSOSActive ? 'animate-ping' : ''}`} />
@@ -162,10 +167,22 @@ const Dashboard = () => {
                 </div>
             </div>
 
+            {/* Quick Actions */}
+            <QuickActions
+                onNavigateToMap={() => navigate('/map')}
+                onNavigateToServices={() => navigate('/services')}
+            />
+
+            {/* Weather & Network Status Row */}
+            <div className="grid grid-cols-1 gap-4">
+                <WeatherWidget />
+                <NetworkStatus />
+            </div>
+
             {/* System Architecture Indicator (for judges) */}
             <div className="glass p-4 rounded-2xl border border-white/5">
                 <div className="flex items-center gap-2 text-[10px] text-slate-500">
-                    <Clock size={12} />
+                    <Zap size={12} className="text-red-500" />
                     <span className="font-mono">
                         Decision Engine: Deterministic | GPS: Adaptive | State: Persistent
                     </span>
