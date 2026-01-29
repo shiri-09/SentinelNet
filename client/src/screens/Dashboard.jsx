@@ -7,6 +7,8 @@ import { SOS_STATES } from '../logic/sosEngine';
 import WeatherWidget from '../components/WeatherWidget';
 import NetworkStatus from '../components/NetworkStatus';
 import QuickActions from '../components/QuickActions';
+import SystemHealthBar from '../components/SystemHealthBar';
+
 /**
  * Dashboard Screen
  * 
@@ -45,7 +47,10 @@ const Dashboard = () => {
     };
 
     return (
-        <div className="p-6 pb-24 space-y-8 max-w-md mx-auto min-h-screen">
+        <div className="p-6 pb-24 space-y-6 max-w-md mx-auto min-h-screen">
+            {/* System Health Bar */}
+            <SystemHealthBar battery={battery} gpsActive={!!userLocation} />
+
             {/* Header */}
             <header className="flex justify-between items-center">
                 <div>
